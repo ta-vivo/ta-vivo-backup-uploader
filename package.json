@@ -1,0 +1,16 @@
+{
+  "name": "ta-vivo-backup-uploader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^1.35.2",
+    "dotenv": "^16.0.0"
+  }
+}
