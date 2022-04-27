@@ -28,4 +28,12 @@ This command doing all the steps necessary to run the service inside Docker cont
 make
 ```
 
+## Restore backup
+
+At this point, the backup service generate a `SQL` file with the backup of the database.
+
+```bash
+cat dump.sql | docker exec -i CONTAINER_NAME_OR_ID psql -U postgres -d tavivo
+```
+
 This is all! :heart:
