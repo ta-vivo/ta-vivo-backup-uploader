@@ -31,8 +31,6 @@ At this point, the backup service generate a `SQL` file with the backup of the d
 cat dump.sql | docker exec -i CONTAINER_NAME_OR_ID psql -U postgres -d tavivo
 ```
 
-This is all! :heart:
-
 ## Tips
 
 Here I am going to assume that you have crontab installed.
@@ -60,3 +58,7 @@ You can add `/tmp/stderr.log` on the end of the line instead of `&1` like;
 ```bash
 0 3 * * * cd /var/www/services/ta-vivo-backup-uploader && make -f Makefile-remote >/dev/null 2>/tmp/stderr.log
 ```
+
+---
+
+This is all! :heart:
