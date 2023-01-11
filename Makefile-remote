@@ -1,0 +1,14 @@
+include .env
+
+create-backup:
+	@echo "Creating Postgres container"
+	@docker run --name postgres-for-backup -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres  -d postgres:10.4
+	@echo "Connecting to Postgres container"
+	@echo "Creating backup of all tables data"
+	@docker exec -t postgres-for-backup pg_dump --dbname=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME} > ./src/file/dump.sql
+	@echo "Remove the container"
+	@docker rm -f postgres-for-backup
+	@echo "Backup created, now upload it to Supabase"
+	@docker run --rm -v "${PWD}:/app" -w /app node:16.14.2 /bin/bash -c "yarn install; node src/index.js"
+	@echo "Backup uploaded to Supabase, all jobs done."
+	
