@@ -1,3 +1,4 @@
 node_modules
 .env
 src/file/dump.sql
+src/file/dump.sql.tar.gz
