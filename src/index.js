@@ -4,6 +4,7 @@ const { createClient } = require('@supabase/supabase-js')
 
 const supabaseUrl = process.env.SUPABASE_URL
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
+const supabaseBucketName = process.env.SUPABASE_BUCKET_NAME
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
@@ -13,7 +14,7 @@ const uploadFile = async () => {
   const buf = fs.readFileSync(__dirname + '/file/dump.sql');
 
   const { data, error } = await supabase.storage
-    .from('tavivo-backup')
+    .from(supabaseBucketName)
     .upload(fileName, buf)
 
   console.log('🚀 ~ file: index.js ~ line 13 ~ uploadFile ~ error', error)
