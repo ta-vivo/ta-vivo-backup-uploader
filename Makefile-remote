@@ -1,14 +1,20 @@
 include .env
 
 create-backup:
-	@echo "Creating Postgres container"
-	@docker run --name postgres-for-backup -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres  -d postgres:10.4
-	@echo "Connecting to Postgres container"
-	@echo "Creating backup of all tables data"
-	@docker exec -t postgres-for-backup pg_dump --dbname=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME} > ./src/file/dump.sql
-	@echo "Remove the container"
-	@docker rm -f postgres-for-backup
-	@echo "Backup created, now upload it to Supabase"
-	@docker run --rm -v "${PWD}:/app" -w /app node:16.14.2 /bin/bash -c "yarn install; node src/index.js"
+	@echo "Creating backup directory"
+	@mkdir -p ./src/file
+	@echo "Creating backup from external database"
+	@docker run --rm -v "${PWD}:/app" -w /app \
+		-e PGPASSWORD=${DATABASE_PASSWORD} \
+		postgres:17 \
+		bash -c "pg_dump --host=${DATABASE_HOST} --port=${DATABASE_PORT} --username=${DATABASE_USER} --dbname=${DATABASE_NAME} $$(echo '${DATABASE_EXCLUDE_TABLES_DATA}' | tr ',' '\n' | sed 's/^ *//;s/ *$$//' | grep -v '^$$' | sed 's/^/--exclude-table-data=/' | tr '\n' ' ') > /app/src/file/dump.sql"
+	@echo "Backup created, uploading to Supabase"
+	@docker run --rm -v "${PWD}:/app" -w /app --env-file .env node:22 \
+		/bin/sh -c "yarn install && node src/index.js"
+	@echo "Cleaning up backup file"
+	@rm -f ./src/file/dump.sql
 	@echo "Backup uploaded to Supabase, all jobs done."
-	
+
+clean:
+	@echo "Cleaning up backup file"
+	@rm -f ./src/file/dump.sql
