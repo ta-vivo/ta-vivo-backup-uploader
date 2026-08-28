@@ -7,7 +7,7 @@ create-backup:
 	@docker run --rm -v "${PWD}:/app" -w /app \
 		-e PGPASSWORD=${DATABASE_PASSWORD} \
 		postgres:17 \
-		bash -c "pg_dump --host=${DATABASE_HOST} --port=${DATABASE_PORT} --username=${DATABASE_USER} --dbname=${DATABASE_NAME} $$(echo '${DATABASE_EXCLUDE_TABLES_DATA}' | tr ',' '\n' | sed 's/^ *//;s/ *$$//' | grep -v '^$$' | sed 's/^/--exclude-table-data=/' | tr '\n' ' ') > /app/src/file/dump.sql"
+		bash -c "pg_dump --host=${DATABASE_HOST} --port=${DATABASE_PORT} --username=${DATABASE_USER} --dbname=${DATABASE_NAME} $$(echo '${DATABASE_EXCLUDE_TABLES_DATA}' | tr ',' '\n' | sed 's/^ *//;s/ *$$//' | grep -v '^$$' | sed 's/^/--exclude-table-data="/; s/$$/"/' | tr '\n' ' ') > /app/src/file/dump.sql"
 	@echo "Backup created, uploading to Supabase"
 	@docker run --rm -v "${PWD}:/app" -w /app --env-file .env node:22 \
 		/bin/sh -c "yarn install && node src/index.js"
